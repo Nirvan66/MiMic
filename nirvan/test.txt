@@ -1,0 +1,29 @@
+totalPoints = len(encoderIn)
+        accuracy = []
+        loss = []
+        prev=0
+        nxt = batchSize
+        batch = 0
+        while(prev<totalPoints):
+            decoderOut = self.getDecodeOut(decoderIn[prev:nxt])
+            padEn = pad_sequences(encoderIn[prev:nxt], dtype='int32', padding='post', truncating='post')
+            padDe = pad_sequences(decoderIn[prev:nxt], dtype='int32', padding='post', truncating='post')
+#             print(encoderIn[prev:nxt])
+#             print([[self.index2word[j] for j in i]for i in encoderIn[prev:nxt]])
+
+#             print(decoderIn[prev:nxt])
+#             print([[self.index2word[j] for j in i] for i in decoderIn[prev:nxt]])
+
+#             print([[idx for idx,j in enumerate(i) if j==1] for k in decoderOut for i in k ])
+
+#             print(len(padEn[0]))
+#             print(len(padDe[0]), len(decoderOut[0]))
+#             print()
+            
+            print("Processing points: {}:{}/{}".format(prev,nxt,totalPoints))
+            history = self.model.fit([padEn, padDe], decoderOut, epochs=epochs)
+            accuracy += history.history['acc']
+            loss += history.history['loss']
+
+            prev += batchSize
+            nxt += batchSize
