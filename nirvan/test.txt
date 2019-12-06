@@ -21,6 +21,20 @@
 # decoder_output_data = np.array( onehot_answers )
 # print( decoder_output_data.shape )
 
+
+word2vec =  pickle.load(
+    open('C:\\Users\\Nirvan S P Theethira\\Desktop\\MiMic\\data\\word2vec\\words.pkl', 'rb'))
+len(word2vec)
+prune={}
+for word in mic.tokenizer.word_index.keys():
+    try:
+        prune[word] = word2vec[word]
+    except:
+        print([word])
+print(len(prune),len(mic.tokenizer.word_index),len(word2vec))
+pickle.dump(prune, 
+            open('C:\\Users\\Nirvan S P Theethira\\Desktop\\MiMic\\data\\{}Data\\word2vec.pkl'.format(person), 'wb'))
+
 mic = Mimic(Preprocessor())
 preQ, preA = mic.build(questions[0:10],answers[0:10])
 tokenizedInputs = mic.tokenizer.texts_to_sequences( preQ )
