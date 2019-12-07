@@ -56,6 +56,8 @@ class AutomaticMetricTester:
     def computeBLUEScore(self):
         blue_references = self.packTexts(self.breakTexts(self._references))
         blue_candidates = self._candidates #self.breakTexts(self._candidates)
+        print(blue_references)
+        print(blue_candidates)
         #print(blue_references)
         #print(blue_candidates)
         self._blue_score = bleu_score.corpus_bleu(blue_references, blue_candidates, smoothing_function=bleu_score.SmoothingFunction().method1)
@@ -231,7 +233,9 @@ class AutomaticMetricTester:
             if len(reference) != 0:
                 self._wer_error.append(self.wer(reference, candidate, debug=False))
 
-    def compileScores(self):
+    def compileScores(self,cheat=False):
+        if cheat:
+            self._candidates = self._references
         self.computeBLUEScore()
         self.computeROGUEScores()
         self.computeMETEORScore()
