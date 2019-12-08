@@ -14,8 +14,13 @@ class AutomaticMetricTester:
         self._model = model
         pairs = list(zip(statements, references))
         random.shuffle(pairs)
-        self._statements = [pair[0] for pair in pairs[0:min(sample_size, len(pairs))]]
-        self._references = self._model.preProcessor.cleanTexts([pair[1] for pair in pairs[0:min(sample_size, len(pairs))]])
+
+        if not sample:
+            sample_size = len(pairs)
+        else:
+            sample_size = min(sample_size, len(pairs))
+        self._statements = [pair[0] for pair in pairs[0:sample_size]]
+        self._references = self._model.preProcessor.cleanTexts([pair[1] for pair in pairs[0:sample_size]])
         self._candidates = self.breakTexts([self._model.chat(text) for text in self._statements])
         self._tempDataFolder = tempDataFolder
 
@@ -240,6 +245,7 @@ class AutomaticMetricTester:
         self.computeWER()
 
     def printScores(self):
+        print("Sample Size: ", len(self._statements))
         print("BLUE SCORE: ", self._blue_score)
 
         print("ROGUE 1 Recall Average: ", np.average(self._rouge_1_recall))
