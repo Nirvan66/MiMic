@@ -256,8 +256,8 @@ class Mimic_T:
 		self.EPOCHS = 1
 		self.START_TOKEN = None
 		self.END_TOKEN = None
-		self.questions = pickle.load(open("data/joeyInputTrain.pkl", "rb")) + pickle.load(open("data/joeyInputTest.pkl", "rb"))
-		self.answers = pickle.load(open("data/joeyOutputTrain.pkl", "rb")) + pickle.load(open("data/joeyOutputTest.pkl", "rb"))
+		self.questions = pickle.load(open("joeyInputTrain.pkl", "rb")) + pickle.load(open("joeyInputTest.pkl", "rb"))
+		self.answers = pickle.load(open("joeyOutputTrain.pkl", "rb")) + pickle.load(open("joeyOutputTest.pkl", "rb"))
 
 	def preprocess_sentence(self,sentence):
 		sentence = sentence.lower().strip()
@@ -329,9 +329,9 @@ class Mimic_T:
 
 		self.model.fit(self.dataset, epochs=self.EPOCHS, callbacks=[cp_callback])
 
-	def loadWeights(self):
+	def loadWeights(self, path):
 		#self.model.load_weights("checkpoints/joey/cp.ckpt")
-		self.model.load_weights("joey.h5")
+		self.model.load_weights(path)
 
 	def evaluate(self,sentence):
 		sentence = self.preprocess_sentence(sentence)
