@@ -1,3 +1,18 @@
+'''
+Creator: Nirvan S P Theethira
+Date: 12/01/2019
+Purpose:  CSCI 5266 Fall Group Project: Mimic
+This files contains the code to train and test a seq2seq personality based chat bot.
+
+PLEASE HAVE THE DATA IN THE SAME FOLDER AS THIS FILE BEFORE RUNNING
+
+SAMPLE TRAIN RUN: 
+python Mimic.py --trainCharachter joey --epochs 2 --batchSize 20 --saveEpochs 1 --modelSaveFile joey2
+
+SAMPLE LOAD:
+python Mimic.py --modelLoadFile joey2
+'''
+
 import numpy as np
 import pickle
 import keras
@@ -7,6 +22,7 @@ import re
 import os
 import matplotlib.pyplot as plt
 from collections import defaultdict
+import argparse
 
 class LossAndErrorPrintingCallback(keras.callbacks.Callback):
     def __init__(self, mimic, saveFile, saveEpoch):
@@ -235,4 +251,66 @@ class Preprocessor:
             if tokens:
                 words = [tokens[0]]+words+[tokens[1]]
             cleanText.append(' '.join(words))
-        return cleanText    
+        return cleanText
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Train and test a seq2seq personality chatbot')
+    parser.add_argument('--trainCharachter', type=str, help='Name of character to train on. \
+                         This helps load data to train model on. eg:joey')
+    parser.add_argument('--epochs', type=int, help='Number of epochs to train on. eg:100')
+    parser.add_argument('--batchSize', type=int, help='Number of batches to split data into. eg:10')
+    parser.add_argument('--saveEpochs', type=int, help='Number of epochs to save after. eg:10')
+    parser.add_argument('--modelSaveFile', type=str, help='File to save model to. eg:joey400')
+
+    parser.add_argument('--modelLoadFile', type=str, help='File to load model from. eg:joey400')
+
+    args = parser.parse_args()
+
+    if args.trainCharachter:
+        genericQuestions = pickle.load(
+                           open('data/{}Data/genericQuestionsTrain.pkl'
+                           .format(args.trainCharachter), 'rb'))
+        genericAnswers = pickle.load(
+                         open('data/{}Data/genericAnswersTrain.pkl'
+                         .format(args.trainCharachter), 'rb'))
+        print("\nGeneric data loaded: input :{}, output:{}".format(len(genericQuestions),len(genericAnswers)))
+        r = np.random.randint(0,len(genericQuestions))
+        print("Sample Generic data input: {}".format(genericQuestions[r]))
+        print("Sample Generic data output: {}".format(genericAnswers[r]))
+
+        personInput = pickle.load(
+                      open('data/{}Data/{}InputTrain.pkl'
+                      .format(args.trainCharachter,args.trainCharachter), 'rb'))         
+        personOutput = pickle.load(
+                       open('data/{}Data/{}OutputTrain.pkl'
+                       .format(args.trainCharachter,args.trainCharachter), 'rb'))
+        print("{} data loaded: input :{}, output:{}".format(args.trainCharachter,len(personInput),len(personOutput)))
+        r = np.random.randint(0,len(personInput))
+        print("Sample {} data input: {}".format(args.trainCharachter, personInput[r]))
+        print("Sample {} data output: {}".format(args.trainCharachter, personOutput[r]))
+
+        print("Training model on {} epochs in batches of {}".format(args.epochs, args.batchSize))
+        mic = Mimic(Preprocessor())
+        preQ, preA= mic.build(genericQuestions + personInput, genericAnswers + personOutput,
+                               word2vecFile='data/{}Data/word2vec.pkl'.format(args.trainCharachter))
+
+        e = mic.fit(preQ[0:100],preA[0:100],batchSize=args.batchSize,epochs=args.epochs,plot=True,
+                    saveFile=args.modelSaveFile,
+                    saveEpoch=args.saveEpochs)
+        print("Done training starting chat bot. Have fun talking to {}".format(args.trainCharachter))
+
+    elif args.modelLoadFile:
+        mic = Mimic.load(args.modelLoadFile)
+        print("Loaded model accuracy: {}".format(mic.accuracy))
+    else:
+        print("Error with input parameters. Please type: python Mimic.py --help")
+
+    print("\nStarting chat bot")
+
+    while(1):
+        inp = input("\nInput test sentence or 0 to quit: ")
+        if inp=='0':
+            break
+        print(mic.chat(inp))
+
+
