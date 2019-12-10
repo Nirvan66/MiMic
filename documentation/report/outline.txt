@@ -1,0 +1,37 @@
+Abstract
+Introduction:
+- Introduce the problem and our solutions
+- Mention that we have two different models that we used
+- Hint at conclusion
+Evaluation Metrics:
+- Why is this a problem
+- What we tried
+- - Automatic metrics with brief description of each
+- - Human metric idea, execution and examples
+Seq2Seq Model:
+- Why we tried this
+- What this model has
+- Issues/Problems in implementation
+- Review of results
+- - Automatic Metric results
+- - Human Metric results
+- Error analysis
+- - What examples did it fail on and why do we think?
+- - Can we suggest future edits to correct this?
+- Conclusion
+- - Did the model work
+Transformer Model:
+- Why we tried this
+- What this model has
+- Issues/Problems in implementation
+- Review of results
+- - Automatic Metric results
+- - Human Metric results
+- Error analysis
+- - What examples did it fail on and why do we think?
+- - Can we suggest future edits to correct this?
+- Conclusion
+- - Did the model work
+Problem Conclusion:
+- Did it work well?
+- What else we would like to have tried?
