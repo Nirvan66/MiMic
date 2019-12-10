@@ -25,6 +25,9 @@ from collections import defaultdict
 import argparse
 
 class LossAndErrorPrintingCallback(keras.callbacks.Callback):
+    '''
+    Custom callback used to save model every few epochs.
+    '''
     def __init__(self, mimic, saveFile, saveEpoch):
         super(LossAndErrorPrintingCallback, self).__init__()
         self.mimic = mimic
@@ -32,21 +35,33 @@ class LossAndErrorPrintingCallback(keras.callbacks.Callback):
         self.saveEpoch =  saveEpoch
 
     def on_epoch_end(self, epoch, logs=None):
+        '''
+        Save model every few epochs
+        '''
         self.mimic.accuracy = logs['accuracy']
         if epoch%self.saveEpoch==0:
             print('Saving model at {}'.format(self.saveFile))
             self.mimic.save(self.saveFile)
 
     def on_train_end(self, logs={}):
+        '''
+        Save model at the end of training
+        '''
         print("Training sucessfull!! Saving model at {}".format(self.saveFile))
         self.mimic.save(self.saveFile)
 
 class Mimic:
+    '''
+    The class us used to train a personality based chatbot.
+    '''
     UNK = '<UNK>'
     START = '<START>'
     END = '<END>'
 
     def __init__(self, preProcessor, model=None, tokenizer=None, embeddingDim=200, metadata=None,):
+        '''
+        Used to initialize all required parameters.
+        '''
         self.model = None
         self.maxInputLen = 0
         self.maxOutputLen = 0
@@ -66,6 +81,9 @@ class Mimic:
             self.extractChatbot()
 
     def extractEmbeddings(self, word2vecFile):
+        '''
+        Extract embedding weights from Glove vectors in the order of word tokens.
+        '''
         print("Using {} for embedding weights".format(word2vecFile))
         embeddings = defaultdict(list,pickle.load(open(word2vecFile,'rb')))
         embeddingDim = len(list(embeddings.values())[0])
@@ -79,6 +97,10 @@ class Mimic:
 
 
     def build(self, inputs, outputs, word2vecFile=None):
+        '''
+        Creates tokenizer from corpus.
+        Also creates all layers of the seq2seq model.
+        '''
         processedInputs = self.preProcessor.cleanTexts(inputs)
         processedOutputs = self.preProcessor.cleanTexts(outputs, tokens=[self.START, self.END])
 
@@ -118,6 +140,9 @@ class Mimic:
         return processedInputs, processedOutputs
 
     def getOneHot(self, tokenizedText):
+        '''
+        Convert tokenized words to one hot vectors.
+        '''
         paddedText = np.zeros((tokenizedText.shape[0],tokenizedText.shape[1]))
         for i in range(len(tokenizedText)) :
             paddedText[i] = np.hstack((tokenizedText[i][1:],[0]))
@@ -125,6 +150,9 @@ class Mimic:
         return np.array( onehotText )
 
     def dataGen(self, tokenizedInputs, tokenizedOutputs, batchSize=10):
+        '''
+        Generates batches of data for training.
+        '''
         paddedInputs = preprocessing.sequence.pad_sequences( tokenizedInputs , maxlen=self.maxInputLen , padding='pre' )
         encoderInput = np.array( paddedInputs )
 
@@ -143,6 +171,9 @@ class Mimic:
                 counter=0
 
     def fit(self, inputs, outputs, batchSize = 10, epochs = 20, saveFile=None, plot=False, saveEpoch=1):
+        '''
+        The main training function.
+        '''
         tokenizedInputs = self.tokenizer.texts_to_sequences( inputs )
         mx = max( [ len(x) for x in tokenizedInputs ] )
         if mx>self.maxInputLen:
@@ -176,6 +207,9 @@ class Mimic:
             plt.show()
 
     def extractChatbot(self):
+        '''
+        Create inference model.
+        '''
         _, stateH, stateC = self.model.layers[4](self.model.layers[2](self.model.inputs[0]))
         self.encoder = keras.models.Model(self.model.inputs[0], [stateH, stateC])
 
@@ -191,6 +225,9 @@ class Mimic:
 
 
     def chat(self, sentence):
+        '''
+        Pass input text through the model and extract output.
+        '''
         sentence = self. preProcessor.cleanTexts([sentence])[0]
         padSentence = preprocessing.sequence.pad_sequences([self.tokenizer.texts_to_sequences([sentence])[0]] ,
                                                            maxlen=self.maxInputLen , padding='pre')
@@ -237,11 +274,17 @@ class Mimic:
         return cls(preProcessor= metaData['preProcessor'], model=model, tokenizer=tokenizer, metadata=metaData)
 
 class Preprocessor:
+    '''
+    Used to clean text before training.
+    '''
     def __init__(self, lower=False, keepPunct='[.,!?;]'):
         self.toLower = lower
         self.keepPunct = keepPunct
 
     def cleanTexts(self, textList, tokens=None):
+        '''
+        Takes an input text and adds a space between words and keep punctuations.
+        '''
         cleanText = []
         for sent in textList:
             sent = re.sub('[0-9]','',sent)
