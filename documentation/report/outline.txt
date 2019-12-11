@@ -1,8 +1,12 @@
 Abstract
 Introduction:
 - Introduce the problem and our solutions
+- Why is this good for nn?
 - Mention that we have two different models that we used
 - Hint at conclusion
+Dataset:
+- Describe our datasets and why we used them
+- Data error analysis
 Evaluation Metrics:
 - Why is this a problem
 - What we tried
@@ -11,7 +15,7 @@ Evaluation Metrics:
 Seq2Seq Model:
 - Why we tried this
 - What this model has
-- Issues/Problems in implementation
+- Issues/Problems in implementation (fail)
 - Review of results
 - - Automatic Metric results
 - - Human Metric results
@@ -35,3 +39,4 @@ Transformer Model:
 Problem Conclusion:
 - Did it work well?
 - What else we would like to have tried?
+- More data! More complexity!
