@@ -1,0 +1,59 @@
+\begin{thebibliography}{10}
+
+\bibitem{Li2016}
+Jiwei Li, Michel Galley, Chris Brockett, Jianfeng Gao, and Bill Dolan.
+\newblock A persona-based neural conversation model.
+\newblock {\em CoRR}, abs/1603.06155, 2016.
+
+\bibitem{LINH2019}
+Suzana Ilic, Reiichiro Nakano, and Ivo Hajnal.
+\newblock Designing dialogue systems: A mean, grumpy, sarcastic chatbot in the
+  browser.
+
+\bibitem{QianHZXZ17}
+Qiao Qian, Minlie Huang, Haizhou Zhao, Jingfang Xu, and Xiaoyan Zhu.
+\newblock Assigning personality/identity to a chatting machine for coherent
+  conversation generation.
+\newblock {\em CoRR}, abs/1706.02861, 2017.
+
+\bibitem{ZhouHZZL17}
+Hao Zhou, Minlie Huang, Tianyang Zhang, Xiaoyan Zhu, and Bing Liu.
+\newblock Emotional chatting machine: Emotional conversation generation with
+  internal and external memory.
+\newblock {\em CoRR}, abs/1704.01074, 2017.
+
+\bibitem{NMC2017}
+Huyen Nguyen, David Morales, and Tessera Chin.
+\newblock A neural chatbot with personality.
+
+\bibitem{Radz2017}
+Nicole~M. Radziwill and Morgan~C. Benton.
+\newblock Evaluating quality of chatbots and intelligent conversational agents.
+\newblock {\em CoRR}, abs/1704.04579, 2017.
+
+\bibitem{Xing2018}
+Yujie Xing and Raquel Fern{\'{a}}ndez.
+\newblock Automatic evaluation of neural personality-based chatbots.
+\newblock {\em CoRR}, abs/1810.00472, 2018.
+
+\bibitem{LiuLSNCP16}
+Chia{-}Wei Liu, Ryan Lowe, Iulian~Vlad Serban, Michael Noseworthy, Laurent
+  Charlin, and Joelle Pineau.
+\newblock How {NOT} to evaluate your dialogue system: An empirical study of
+  unsupervised evaluation metrics for dialogue response generation.
+\newblock {\em CoRR}, abs/1603.08023, 2016.
+
+\bibitem{Devlin2018}
+Jacob Devlin, Ming{-}Wei Chang, Kenton Lee, and Kristina Toutanova.
+\newblock {BERT:} pre-training of deep bidirectional transformers for language
+  understanding.
+\newblock {\em CoRR}, abs/1810.04805, 2018.
+
+\bibitem{SerbanLCP15}
+Iulian~Vlad Serban, Ryan Lowe, Peter Henderson, Laurent Charlin, and Joelle
+  Pineau.
+\newblock A survey of available corpora for building data-driven dialogue
+  systems.
+\newblock {\em CoRR}, abs/1512.05742, 2015.
+
+\end{thebibliography}
