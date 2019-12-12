@@ -24,7 +24,8 @@ class AutomaticMetricTester:
         self._candidates = self.breakTexts([self._model.chat(text) for text in self._statements])
         self._tempDataFolder = tempDataFolder
 
-        self._blue_score = None
+        self._bleu_score_corpus = None
+        self._bleu_score_average = None
 
         self._rouge_1_recall = []
         self._rouge_1_precision = []
@@ -46,26 +47,36 @@ class AutomaticMetricTester:
 
         self._wer_error = None
 
-    # TODO: Move to preproc
+    # Break sentence into unigrams
     def breakTexts(self, textList):
         return [text.split(' ') for text in self._model.preProcessor.cleanTexts(textList)]
 
+    # add another list layer for those metrics which support a list of exmaple text
     def packTexts(self, textList):
         return [[text] for text in textList]
 
+    # merge text back together
     def unBreakTexts(self, textList):
         return [' '.join(text) for text in textList]
 
-    def computeBLUEScore(self):
+    # Computes Corpus Blue Score for reference and candidate
+    def computeBLEUScoreCorpus(self):
         blue_references = self.packTexts(self.breakTexts(self._references))
         blue_candidates = self._candidates #self.breakTexts(self._candidates)
-        #print(blue_references)
-        #print(blue_candidates)
-        #print(blue_references)
-        #print(blue_candidates)
-        self._blue_score = bleu_score.corpus_bleu(blue_references, blue_candidates, smoothing_function=bleu_score.SmoothingFunction().method1)
 
-    def computeROGUEScores(self):
+        self._bleu_score_corpus = bleu_score.corpus_bleu(blue_references, blue_candidates)
+
+    # computes average BLEU score
+    def computeBLEUScoreAverage(self):
+        blue_references = self.packTexts(self.breakTexts(self._references))
+        blue_candidates = self._candidates #self.breakTexts(self._candidates)
+
+        self._bleu_score_average = 0
+        for (ref,cand) in zip(blue_references, blue_candidates):
+            self._bleu_score_average += bleu_score.sentence_bleu(ref, cand)
+        self._bleu_score_average = self._bleu_score_average / len(self._candidates)
+
+    def computerougeScores(self):
         self._rouge_1_recall = []
         self._rouge_1_precision = []
         self._rouge_1_f1 = []
@@ -78,8 +89,8 @@ class AutomaticMetricTester:
         self._rouge_el_precision = []
         self._rouge_el_f1 = []
 
-        rogue_references = self.breakTexts(self._references)
-        for (candidate, reference) in zip(self._candidates, rogue_references):
+        rouge_references = self.breakTexts(self._references)
+        for (candidate, reference) in zip(self._candidates, rouge_references):
             # print(candidate, reference)
             # We will consider the 1-gram version
             recall, precision, rouge = rouge_n_sentence_level(candidate, reference, 1)
@@ -239,24 +250,26 @@ class AutomaticMetricTester:
     def compileScores(self,cheat=False):
         if cheat:
             self._candidates = self.breakTexts(self._references)
-        self.computeBLUEScore()
-        self.computeROGUEScores()
+        self.computeBLEUScoreCorpus()
+        self.computeBLEUScoreAverage()
+        self.computerougeScores()
         self.computeMETEORScore()
         self.computeWER()
 
     def printScores(self):
         print("Sample Size: ", len(self._statements))
-        print("BLUE SCORE: ", self._blue_score)
+        print("BLEU Corpus SCORE: ", self._bleu_score_corpus)
+        print("BLEU Avg. SCORE: ", self._bleu_score_average)
 
-        print("ROGUE 1 Recall Average: ", np.average(self._rouge_1_recall))
-        print("ROGUE 1 Precision Average: ", np.average(self._rouge_1_precision))
-        print("ROGUE 1 F1: ", np.average(self._rouge_1_f1))
-        print("ROGUE 4 Recall Average: ", np.average(self._rouge_4_recall))
-        print("ROGUE 4 Precision Average: ", np.average(self._rouge_4_precision))
-        print("ROGUE 4 F1: ", np.average(self._rouge_4_f1))
-        print("ROGUE el Recall Average: ", np.average(self._rouge_el_recall))
-        print("ROGUE el Precision Average: ", np.average(self._rouge_el_precision))
-        print("ROGUE el F1: ", np.average(self._rouge_el_f1))
+        print("rouge 1 Recall Average: ", np.average(self._rouge_1_recall))
+        print("rouge 1 Precision Average: ", np.average(self._rouge_1_precision))
+        print("rouge 1 F1: ", np.average(self._rouge_1_f1))
+        print("rouge 4 Recall Average: ", np.average(self._rouge_4_recall))
+        print("rouge 4 Precision Average: ", np.average(self._rouge_4_precision))
+        print("rouge 4 F1: ", np.average(self._rouge_4_f1))
+        print("rouge el Recall Average: ", np.average(self._rouge_el_recall))
+        print("rouge el Precision Average: ", np.average(self._rouge_el_precision))
+        print("rouge el F1: ", np.average(self._rouge_el_f1))
 
         print("METEOR Precision: ", self._meteor_precision)
         print("METEOR Recall: ", self._meteor_recall)
