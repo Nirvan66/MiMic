@@ -133,6 +133,23 @@ All words predicted by the SoftMax layer are captured until an end tag is genera
 \caption{Table showing various scores for this sequence-to-sequence model on the Joey and generic questions and answers dataset (Q\&A).}
 \end{figure}
 
+\begin{figure}
+\begin{center}
+	\scalebox{.8}
+	{
+	\begin{tabular}{ |L|L| } 
+		\hline
+		\textbf{Question} & \textbf{Answer} \\
+		\hline
+		 Do you like food ? & I'm a software , I am an actor . I am , I am what am what am ? ! I am die of error ? \\
+		\hline
+	\end{tabular}
+	}
+\end{center}
+\label{fig:s2s_errors}
+\caption{Failure in generating grammatically correct sentence}
+\end{figure}
+
 As seen in Figure \ref{fig:s2s_data} this model did not perform well with respect to most of the automatic metrics.
 This is somewhat to be expected though given that these types of metrics are known to be flawed when evaluating our kind of task.
 We will discuss this in greater detail in Section \ref{sec:conclusion}.
@@ -142,6 +159,9 @@ That is, some of it may be based on the human tester randomly picking between tw
 We will also review this in greater detail in Section \ref{sec:conclusion}.
 
 Here will review a few particular cases where this model consistently failed to perform well on human metrics and follow with some ideas for future improvement.
+
+From Figure \ref{fig:s2s_errors} it is seen how the model fails to generate grammatically correct sentences. This is because, while the model understands how to mimic Joey, it seems to fail at understanding English grammar. This can be fixed by adding a \emph{conditional random field (CRF)} layer that uses the Viterbi algorithm. More detail is given about this in the next section.
+
 
 \subsection{Pitfalls and Improvements}
 One major pitfall faced while developing the seq2seq model was during training of our model. 

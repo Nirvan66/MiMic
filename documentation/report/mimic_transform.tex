@@ -1,0 +1,41 @@
+The introduction of Transformers in 2017 \textbf{https://arxiv.org/pdf/1706.03762.pdf} and it's success in Natural Language Processing tasks have caused it to replace Long Short-Term Memory (LSTM). The transformer performs better in retaining long-range context dependencies. It works on the self-attention mechanism. The recent performances of Google BERT (trained using Transformers) and Transformers in general motivated us to try it in our task.
+
+\subsection{Model Architecture}
+
+The Embedding layer uses the Subword Text Encoder from the Tensorflow datasets library. The architecture as shown in the diagram below, shows the structure of a single Encoder-Decoder unit. The units are designed such that the outputs of each encoder is connected to every decoder. The number of such units is a hyper-parameter.
+
+The internal structure of the encoder contains a multi-head attention mechanism and a feed-forward network. The multi-head attention network computes a series of scalar dot product attention in parallel. This produces a base for enabling self-attention and sort of acts like an ensemble technique. The self-attention is computed using three vectors - Query, Key and Value. The weights for these vectors are learned during training. The dot product between each word embedding vector and each of these keys are used to compute self-attention. This process is done in parallel, multiple times. These outputs are concatenated and sent to the feed-forward network. The above process allows to jointly attend to information from different sub-spaces of representation.
+
+The internal structure of the decoder is similar to the sub components of the encoder. The difference is the addition of a masked multi-head encoder. It is similar to the multi-head attention with a masking layer. The query vector to a decoder comes from the previous decoder layer while the key and value vectors come from the encoder network layers. The query, key and value vectors for the encoder units come from previous encoder layers. The decoder outputs from the feedfoward network is softmaxed over the vocabulary to produce the next probable word.
+
+\begin{figure}[ht!]
+  \centering
+  \begin{minipage}[b]{0.40\textwidth}
+    \begin{center}
+		\fbox{\includegraphics[width=\textwidth]{transformer.png}}
+	\end{center}
+    \caption{Encoder Decoder Unit. Image taken from: \url{https://arxiv.org/pdf/1706.03762.pdf}}
+    \label{Fig. 1}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.40\textwidth}
+    \begin{center}
+		\fbox{\includegraphics[width=\textwidth]{attention.png}}
+	\end{center}
+    \caption{Attention mechanism. Image taken from: \url{https://arxiv.org/pdf/1706.03762.pdf}}
+    \label{Fig. 2}
+  \end{minipage}
+\end{figure}
+
+\subsection{Issues/ Problems during Implementation}
+Some of the major roadblocks we faced during our implementation of this model included the construction of the transformer. There were no Keras or Tensorflow/PyTorch implementation of a basic transformer. Therefore, we had to refer to certain sources to provide us with implementations of the multi-head attention and positional encoding. Another issue we faced was the inclusion/construction of context. We tried to include the entire chat history (sequence of sentences processed previously) as a context vector to each computation. This idea did not increase the quality of results in the paper \textbf{https://arxiv.org/pdf/1706.03762.pdf} because the compilation of the entire history/context into a single vector is not effective. Therefore, we worked on producing output sentences independent of previous context. Other sources indicate using the concept of goals/entities where the chat-bot would recognize certain parts of the conversation as required entities (stored as context) and would work towards reaching a goal. This approach is quite specific and does not apply to general chat-bots. We recognize this task as room for improvement.
+
+\subsection{Results}
+
+\subsection{Error Analysis}
+Based on our initial test trials, we realized that the model is learning to respond based on a corpus entirely composed of the character's responses and has limited understanding to sentence formation. Training the model on a general question answering corpus did not significantly increase the quality of sentences. Therefore, a possible improvement to our model would be to train the model on a Part of Sentence task. This might enable the model to learn sentence formulation mappings and could structure the sentences better.
+
+The Transformer model performs significantly better when the questions overlap contexts present in the TV show. The model presents outputs that has fewer 'Joey' characteristics when asked generic questions than when asked questions with overlapping TV show context. Overcoming this could be possible with the Part of Sentence training.
+
+\subsection{Conclusion}
+Based on the test results, both human and automatic metrics, the transformer model works better on questions bearing a context to the TV show than generic questions. Future work would include trying to work on mapping how the model constructs a generic answer and then tries to add 'Joey' characteristics to it. Training the model on multiple datasets does not seem to solve this problem. We could try to add an additional learned component that tries to implement the idea of adding characteristics.
