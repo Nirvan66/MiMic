@@ -1,1 +1,16 @@
 \label{sec:conclusion}
+In conclusion, neither model consistently generated Joey like responses (See Sections \ref{subsec:s2s} and \ref{subsec:trans_s2s}). 
+We surmise that both models may understand the Joey personality but fail to generate coherent English sentences.
+Overcoming this issue we believe to be paramount to solving the problem if it is even possible.
+Furthermore, we believe that the lack of proper grammar produces the negative human evaluation results (See Figure \ref{fig:s2s_res} and \ref{fig:trans_res}).
+
+As discussed in the previous sections, the automatic metrics are not known to be good measures of chatbot performance.
+Namely, it is not clear that a single saved test response would be close all appropriate Joey like responses. 
+Hence, even a perfect model would likely fail to have good BLEU, ROUGE, METEOR or WER scores.
+However, our scores for both do seem slightly worse then those witness in similar projects \cite{NMC2017, Li2016}.
+We are not aware of the specifics of the models used in this papers or the data extraction methods used.
+We suspect that our datasets could have been larger and better extracted to avoid incoherent statement response pairs.
+This would likely have produced better results for the automatic metric and the human evaluation.
+
+Our code is available online at GitHub \cite{githubcode}.
+The final code can be found in the source folder.

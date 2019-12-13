@@ -83,7 +83,7 @@ Since the goal of the decoder was to predict the next token given the current to
 %    >>[[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,0,0,0]]
 %\end{python}
 
-\subsection{The Model}
+\subsection{Model Architecture}
 \begin{figure}
 	\begin{center}
 		\fbox{\includegraphics[width=\textwidth]{seq2seqModel.png}}
@@ -113,7 +113,7 @@ All words predicted by the SoftMax layer are captured until an end tag is genera
 \end{figure} 
 
 \subsection{Performance and Error Analysis}
-
+\label{subsec:s2s}
 \begin{figure}
 \begin{center}
 	\scalebox{.8}
@@ -129,8 +129,8 @@ All words predicted by the SoftMax layer are captured until an end tag is genera
 	\end{tabular}
 	}
 \end{center}
-\label{fig:s2s_data}
 \caption{Table showing various scores for this sequence-to-sequence model on the Joey and generic questions and answers dataset (Q\&A).}
+\label{fig:s2s_res}
 \end{figure}
 
 \begin{figure}
@@ -146,11 +146,11 @@ All words predicted by the SoftMax layer are captured until an end tag is genera
 	\end{tabular}
 	}
 \end{center}
+\caption{Failure in generating grammatically correct sentence.}
 \label{fig:s2s_errors}
-\caption{Failure in generating grammatically correct sentence}
 \end{figure}
 
-As seen in Figure \ref{fig:s2s_data} this model did not perform well with respect to most of the automatic metrics.
+As seen in Figure \ref{fig:s2s_res} this model did not perform well with respect to most of the automatic metrics.
 This is somewhat to be expected though given that these types of metrics are known to be flawed when evaluating our kind of task.
 We will discuss this in greater detail in Section \ref{sec:conclusion}.
 We also note some success in this model for the human evaluation.
