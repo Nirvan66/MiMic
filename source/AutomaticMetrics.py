@@ -59,7 +59,8 @@ class AutomaticMetricTester:
     def unBreakTexts(self, textList):
         return [' '.join(text) for text in textList]
 
-    # Computes Corpus Blue Score for reference and candidate
+    # Computes Corpus Bleu Score for reference and candidate
+    # See https://www.aclweb.org/anthology/P02-1040.pdf and https://en.wikipedia.org/wiki/BLEU for more information.
     def computeBLEUScoreCorpus(self):
         blue_references = self.packTexts(self.breakTexts(self._references))
         blue_candidates = self._candidates #self.breakTexts(self._candidates)
@@ -67,6 +68,7 @@ class AutomaticMetricTester:
         self._bleu_score_corpus = bleu_score.corpus_bleu(blue_references, blue_candidates)
 
     # computes average BLEU score
+    # See https://www.aclweb.org/anthology/P02-1040.pdf and https://en.wikipedia.org/wiki/BLEU for more information.
     def computeBLEUScoreAverage(self):
         blue_references = self.packTexts(self.breakTexts(self._references))
         blue_candidates = self._candidates #self.breakTexts(self._candidates)
@@ -76,6 +78,8 @@ class AutomaticMetricTester:
             self._bleu_score_average += bleu_score.sentence_bleu(ref, cand)
         self._bleu_score_average = self._bleu_score_average / len(self._candidates)
 
+    # Compute 1-gram and lcss rouge score
+    # See https://www.freecodecamp.org/news/what-is-rouge-and-how-it-works-for-evaluation-of-summaries-e059fb8ac840/ and https://stackoverflow.com/questions/38045290/text-summarization-evaluation-bleu-vs-rouge for more information.
     def computerougeScores(self):
         self._rouge_1_recall = []
         self._rouge_1_precision = []
@@ -110,6 +114,8 @@ class AutomaticMetricTester:
             self._rouge_el_precision.append(precision)
             self._rouge_el_f1.append(rouge)
 
+    # Compute corpus meteor score
+    # See https://en.wikipedia.org/wiki/METEOR.
     def computeMETEORScore(self):
         os.makedirs(self._tempDataFolder, exist_ok=True)
 
@@ -144,7 +150,9 @@ class AutomaticMetricTester:
             self._meteor_fmean = float(output['fMean'])
             self._meteor_score = float(output['Final score'])
 
-    #   taken from https://web.archive.org/web/20171215025927/http://progfruits.blogspot.com/2014/02/word-error-rate-wer-and-word.html
+    # Computes word edit distance
+    # Code copied taken from https://web.archive.org/web/20171215025927/http://progfruits.blogspot.com/2014/02/word-error-rate-wer-and-word.html
+    # Todo, switch to python library edit distance function
     def wer(self, references, candidates ,debug=False):
         r = references.split()
         h = candidates.split()
@@ -239,6 +247,8 @@ class AutomaticMetricTester:
             print("#ins " + str(numIns))
         return (numSub + numDel + numIns) / (float) (len(r))
 
+    # Compute word error rate
+    # See https://en.wikipedia.org/wiki/Word_error_rate and http://mt-archive.info/AMTA-2006-Snover.pdf.
     def computeWER(self):
         wer_candidates = self.unBreakTexts(self._candidates)
 
@@ -247,6 +257,7 @@ class AutomaticMetricTester:
             if len(reference) != 0:
                 self._wer_error.append(self.wer(reference, candidate, debug=False))
 
+    # Run and save all scores
     def compileScores(self,cheat=False):
         if cheat:
             self._candidates = self.breakTexts(self._references)
@@ -256,6 +267,7 @@ class AutomaticMetricTester:
         self.computeMETEORScore()
         self.computeWER()
 
+    # Print formated scored
     def printScores(self):
         print("Sample Size: ", len(self._statements))
         print("BLEU Corpus SCORE: ", self._bleu_score_corpus)
